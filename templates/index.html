@@ -64,8 +64,9 @@
 
         .brand { display: flex; gap: 22px; align-items: center; }
         .brand img {
-            width: 104px; height: 104px; object-fit: contain; border-radius: 20px;
-            background: white; padding: 8px; border: 1px solid rgba(182, 145, 73, 0.18);
+            width: 118px; height: 118px; object-fit: contain; border-radius: 24px;
+            background: white; padding: 10px; border: 1px solid rgba(182, 145, 73, 0.18);
+            box-shadow: 0 12px 28px rgba(46, 36, 24, 0.10);
         }
         .brand-mark {
             width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center;
@@ -291,6 +292,73 @@
             background: #fffaf3;
         }
 
+        .prediction-result-card {
+            border: 1px solid #ead8b4;
+            border-radius: 20px;
+            background: linear-gradient(180deg, #fffdf8 0%, #fff4e5 100%);
+            padding: 18px;
+        }
+
+        .upload-box {
+            margin-top: 12px;
+            border: 2px dashed #d9bf8f;
+            border-radius: 22px;
+            background: linear-gradient(180deg, #fffdf8 0%, #fff6e9 100%);
+            padding: 26px;
+            text-align: center;
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        .upload-label {
+            display: inline-block;
+            padding: 14px 20px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--red) 0%, var(--gold-deep) 100%);
+            color: white;
+            font-weight: 800;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .upload-helper {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .model-note-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .model-note-card {
+            border: 1px solid #ead8b4;
+            border-radius: 24px;
+            background: linear-gradient(180deg, #fffdf8 0%, #fff4e5 100%);
+            padding: 20px;
+        }
+
+        .model-note-card h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .model-note-card p {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--muted);
+            margin: 8px 0;
+        }
+
+        .model-note-card strong {
+            color: var(--navy);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -392,7 +460,7 @@
         }
 
         @media (max-width: 1100px) {
-            .hero-top, .meta, .grid-2, .grid-3, .feature-grid, .team-grid, .check-grid, .recommend-grid, .optuna-grid, .hyper-grid, .intro-grid {
+            .hero-top, .meta, .grid-2, .grid-3, .feature-grid, .team-grid, .check-grid, .recommend-grid, .optuna-grid, .hyper-grid, .intro-grid, .model-note-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -660,6 +728,26 @@
                     <div class="plot-shell">{{ f1_chart|safe }}</div>
                 </article>
             </div>
+
+            <article class="card" style="margin-top: 18px;">
+                <div class="section-title">
+                    <h2>Explicación de modelos</h2>
+                    <span class="pill">Beneficios, sesgo-varianza e interpretabilidad</span>
+                </div>
+                <div class="model-note-grid">
+                    {% for note in model_notes %}
+                    <div class="model-note-card">
+                        <h3>{{ note.name }}</h3>
+                        <p><strong>Descripción:</strong> {{ note.description }}</p>
+                        <p><strong>Beneficios:</strong> {{ note.benefits }}</p>
+                        <p><strong>Partes fuertes:</strong> {{ note.strengths }}</p>
+                        <p><strong>Partes débiles:</strong> {{ note.weaknesses }}</p>
+                        <p><strong>Sesgo y varianza:</strong> {{ note.bias_variance }}</p>
+                        <p><strong>Interpretabilidad:</strong> {{ note.interpretability }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
         </section>
 
         <section id="hiperparametros" class="panel {% if active_tab == 'hiperparametros' %}active{% endif %}">
@@ -745,8 +833,13 @@
                     <form method="post" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="upload_csv">
                         <input type="hidden" name="tab" value="csv">
-                        <label for="csv_file">Archivo CSV</label>
-                        <input id="csv_file" name="csv_file" type="file" accept=".csv" required>
+                        <div class="upload-box">
+                            <label class="upload-label" for="csv_file">Seleccionar archivo CSV</label>
+                            <input id="csv_file" name="csv_file" type="file" accept=".csv" required>
+                            <div class="upload-helper">
+                                Carga un archivo de datos para analizarlo, ajustar columnas y convertirlo en un nuevo dataset del tablero.
+                            </div>
+                        </div>
                         <button type="submit">Cargar archivo</button>
                     </form>
                 </article>
@@ -758,6 +851,15 @@
                     <p class="subtle">3. Elegir si el problema es regresión o clasificación.</p>
                     <p class="subtle">4. Seleccionar target y features.</p>
                     <p class="subtle">5. Aplicar el dataset al tablero y reentrenar.</p>
+                    <div class="info-panel">
+                        <strong>Formato para predicción directa</strong>
+                        <p class="subtle">
+                            Para predecir con los modelos actuales, el CSV debe traer exactamente las columnas de entrada del dataset activo.
+                            Si faltan columnas, el tablero te dirá cuáles faltan.
+                        </p>
+                        <p class="subtle"><strong>Regresión:</strong> {{ regression_dataset.feature_names|join(", ") }}</p>
+                        <p class="subtle"><strong>Clasificación:</strong> {{ classification_dataset.feature_names[:8]|join(", ") }}...</p>
+                    </div>
                 </article>
             </div>
 
@@ -823,6 +925,62 @@
                     </table>
                 </div>
             </article>
+
+            <article class="card" style="margin-top: 18px;">
+                <div class="section-title">
+                    <h2>Predicción desde CSV</h2>
+                    <span class="pill">Salida por modelo</span>
+                </div>
+                <p class="subtle">
+                    Esta opción no reentrena: toma el CSV cargado, valida si contiene las columnas requeridas y genera predicciones fila por fila.
+                </p>
+                <form method="post">
+                    <input type="hidden" name="action" value="predict_csv">
+                    <input type="hidden" name="tab" value="csv">
+                    <div class="grid-2">
+                        <div>
+                            <label for="prediction_kind">Usar modelos de</label>
+                            <select id="prediction_kind" name="prediction_kind">
+                                <option value="regression">Regresión</option>
+                                <option value="classification">Clasificación</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit">Generar predicciones del CSV</button>
+                </form>
+
+                {% if csv_predictions %}
+                <div class="info-panel">
+                    <strong>Resultado</strong>
+                    <p class="subtle">
+                        Se detectaron <span class="metric-strong">{{ csv_predictions.record_count }}</span> registros válidos y estas son las predicciones para cada modelo.
+                    </p>
+                </div>
+                <div class="grid-2" style="margin-top: 18px;">
+                    {% for table in csv_predictions.tables %}
+                    <div class="prediction-result-card">
+                        <h3>{{ table.model }}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fila</th>
+                                    <th>Predicción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in table.predictions %}
+                                <tr>
+                                    <td>{{ item.row }}</td>
+                                    <td class="metric-strong">{{ item.prediction }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </article>
             {% endif %}
         </section>
 
@@ -835,6 +993,25 @@
                 <p class="subtle">
                     PCA conserva varianza lineal, t-SNE resalta vecindades locales y UMAP busca una estructura visual más natural si la librería está instalada.
                 </p>
+                <form method="post" style="margin-bottom: 18px;">
+                    <input type="hidden" name="action" value="update_embeddings">
+                    <input type="hidden" name="tab" value="reduccion">
+                    <div class="grid-3">
+                        <div>
+                            <label for="tsne_perplexity">t-SNE Perplexity</label>
+                            <input id="tsne_perplexity" name="tsne_perplexity" type="number" step="1" min="5" max="60" value="{{ dimensionality_params.tsne_perplexity }}">
+                        </div>
+                        <div>
+                            <label for="umap_neighbors">UMAP n_neighbors</label>
+                            <input id="umap_neighbors" name="umap_neighbors" type="number" step="1" min="2" max="80" value="{{ dimensionality_params.umap_neighbors }}">
+                        </div>
+                        <div>
+                            <label for="umap_min_dist">UMAP min_dist</label>
+                            <input id="umap_min_dist" name="umap_min_dist" type="number" step="0.01" min="0" max="0.99" value="{{ dimensionality_params.umap_min_dist }}">
+                        </div>
+                    </div>
+                    <button type="submit">Actualizar clusters</button>
+                </form>
                 <div class="grid-3">
                     <div class="plot-shell">{{ pca_chart|safe }}</div>
                     <div class="plot-shell">{{ tsne_chart|safe }}</div>

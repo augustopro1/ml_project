@@ -194,6 +194,44 @@ TEAM_MEMBERS = [
     {"name": "Oscar Barranco Velázquez", "email": "0287244@up.edu.mx"},
 ]
 PROFESSOR_NAME = "Dr. León Palafox"
+MODEL_NOTES = [
+    {
+        "name": "Regresión Lineal",
+        "description": "Modelo base que estima una relación lineal entre variables de entrada y la variable objetivo.",
+        "benefits": "Rápido, simple, estable y muy fácil de explicar.",
+        "strengths": "Alta interpretabilidad, bajo costo computacional, buen punto de referencia.",
+        "weaknesses": "Puede subajustar cuando la relación real no es lineal.",
+        "bias_variance": "Suele tener sesgo más alto y varianza baja.",
+        "interpretability": "Muy alta: los coeficientes ayudan a entender el efecto de cada variable.",
+    },
+    {
+        "name": "Random Forest",
+        "description": "Ensamble de múltiples árboles entrenados sobre subconjuntos de datos y variables.",
+        "benefits": "Robusto, flexible y con buen desempeño general.",
+        "strengths": "Captura relaciones no lineales, reduce sobreajuste respecto a un árbol individual.",
+        "weaknesses": "Menos interpretable y más pesado que un modelo lineal.",
+        "bias_variance": "Bias medio y varianza controlada por el ensamble.",
+        "interpretability": "Media: se puede analizar importancia de variables, pero no es tan transparente.",
+    },
+    {
+        "name": "Gradient Boosting",
+        "description": "Construye árboles secuenciales donde cada nuevo árbol corrige errores del anterior.",
+        "benefits": "Muy competitivo en precisión y útil en patrones complejos.",
+        "strengths": "Buen equilibrio entre flexibilidad y capacidad predictiva.",
+        "weaknesses": "Más sensible a hiperparámetros y más lento de entrenar.",
+        "bias_variance": "Reduce bias, pero si se configura mal puede aumentar varianza.",
+        "interpretability": "Media-baja: mejor que una caja negra total, pero menos clara que un modelo lineal.",
+    },
+    {
+        "name": "XGBoost",
+        "description": "Versión optimizada de boosting con regularización y gran eficiencia.",
+        "benefits": "Suele lograr alto desempeño y permite ajustes finos.",
+        "strengths": "Muy potente, escalable y fuerte en datasets tabulares.",
+        "weaknesses": "Mayor complejidad técnica y menor facilidad de explicación.",
+        "bias_variance": "Puede reducir bias con fuerza, pero requiere control para no sobreajustar.",
+        "interpretability": "Media-baja: se apoya en importancia de variables y análisis posterior.",
+    },
+]
 
 
 def load_regression_dataset():
@@ -376,7 +414,7 @@ def make_plotly_scatter(points, labels, title):
     return plot(fig, output_type="div", include_plotlyjs=False, config={"displayModeBar": False, "responsive": True})
 
 
-def prepare_dimensionality_views(dataset):
+def prepare_dimensionality_views(dataset, tsne_perplexity=30, umap_neighbors=15, umap_min_dist=0.1):
     x = [[row[feature] for feature in dataset["feature_names"]] for row in dataset["rows"]]
     y = [row["target"] for row in dataset["rows"]]
     scaler = StandardScaler()
@@ -385,20 +423,36 @@ def prepare_dimensionality_views(dataset):
     capped_y = y[:220]
 
     pca_points = PCA(n_components=2, random_state=42).fit_transform(capped_x)
-    tsne_points = TSNE(n_components=2, init="pca", learning_rate="auto", random_state=42, perplexity=30).fit_transform(capped_x)
+    tsne_points = TSNE(
+        n_components=2,
+        init="pca",
+        learning_rate="auto",
+        random_state=42,
+        perplexity=tsne_perplexity,
+    ).fit_transform(capped_x)
 
     umap_plot = ""
     umap_available = False
     if umap is not None:
-        umap_points = umap.UMAP(n_components=2, random_state=42).fit_transform(capped_x)
+        umap_points = umap.UMAP(
+            n_components=2,
+            random_state=42,
+            n_neighbors=umap_neighbors,
+            min_dist=umap_min_dist,
+        ).fit_transform(capped_x)
         umap_plot = make_plotly_scatter(umap_points, capped_y, "UMAP del dataset categórico")
         umap_available = True
 
     return {
         "pca_chart": make_plotly_scatter(pca_points, capped_y, "PCA del dataset categórico"),
         "tsne_chart": make_plotly_scatter(tsne_points, capped_y, "t-SNE del dataset categórico"),
-        "umap_chart": umap_plot,
-        "umap_available": umap_available,
+            "umap_chart": umap_plot,
+            "umap_available": umap_available,
+            "params": {
+                "tsne_perplexity": tsne_perplexity,
+                "umap_neighbors": umap_neighbors,
+                "umap_min_dist": umap_min_dist,
+            },
     }
 
 
@@ -571,6 +625,53 @@ def build_dataset_from_csv(csv_state, dataset_kind, target_column, selected_feat
     return base
 
 
+def predict_from_csv_rows(csv_state, dataset_kind):
+    if dataset_kind == "regression":
+        dataset = APP_STATE["regression_dataset"]
+        models = APP_STATE["regression_models"]
+    else:
+        dataset = APP_STATE["classification_dataset"]
+        models = APP_STATE["classification_models"]
+
+    required_features = dataset["feature_names"]
+    missing = [feature for feature in required_features if feature not in csv_state["headers"]]
+    if missing:
+        raise ValueError(
+            "Al CSV le faltan columnas requeridas para predecir: " + ", ".join(missing)
+        )
+
+    parsed_rows = []
+    for source_row in csv_state["rows"]:
+        try:
+            parsed_rows.append([float(source_row.get(feature, "0") or 0) for feature in required_features])
+        except ValueError:
+            continue
+
+    if not parsed_rows:
+        raise ValueError("No se encontraron filas válidas para generar predicciones.")
+
+    prediction_tables = []
+    for model_data in models:
+        predictions = model_data["model"].predict(parsed_rows)
+        preview = []
+        for index, prediction in enumerate(predictions[:10], start=1):
+            value = int(prediction) if dataset_kind == "classification" else round(float(prediction), 4)
+            preview.append({"row": index, "prediction": value})
+        prediction_tables.append(
+            {
+                "model": model_data["label"],
+                "predictions": preview,
+            }
+        )
+
+    return {
+        "dataset_kind": dataset_kind,
+        "record_count": len(parsed_rows),
+        "required_features": required_features,
+        "tables": prediction_tables,
+    }
+
+
 def predict_regression(manual_values):
     prediction_rows = []
     for model_data in APP_STATE["regression_models"]:
@@ -606,6 +707,8 @@ def initialize_app_state():
             "acc_chart": make_plotly_bar(classification_models, "accuracy", "Clasificación: comparación de accuracy", "#17324d"),
             "f1_chart": make_plotly_bar(classification_models, "f1", "Clasificación: comparación de F1", "#0f766e"),
             "csv_state": None,
+            "csv_predictions": None,
+            "model_notes": MODEL_NOTES,
         }
     )
 
@@ -639,6 +742,7 @@ def home():
         if csv_file and csv_file.filename:
             try:
                 APP_STATE["csv_state"] = parse_csv_upload(csv_file)
+                APP_STATE["csv_predictions"] = None
                 csv_message = "CSV cargado. Ahora puedes revisar columnas y ajustar el formato."
             except Exception:
                 csv_message = "No se pudo leer el archivo CSV."
@@ -681,12 +785,44 @@ def home():
                     APP_STATE["optuna_summary"] = run_optuna_summary(
                         APP_STATE["regression_dataset"], APP_STATE["classification_dataset"]
                     )
+                    APP_STATE["csv_predictions"] = None
                     manual_values = {feature: 0 for feature in APP_STATE["regression_dataset"]["feature_names"]}
                     csv_message = "CSV aplicado correctamente al tablero."
                 except ValueError as error:
                     csv_message = str(error)
             else:
                 csv_message = "Selecciona una columna target y al menos una columna de features."
+
+    if request.method == "POST" and request.form.get("action") == "predict_csv":
+        active_tab = "csv"
+        csv_state = APP_STATE.get("csv_state")
+        if csv_state:
+            try:
+                dataset_kind = request.form.get("prediction_kind", "regression")
+                APP_STATE["csv_predictions"] = predict_from_csv_rows(csv_state, dataset_kind)
+                csv_message = (
+                    f"Se detectaron {APP_STATE['csv_predictions']['record_count']} registros y se generaron predicciones para cada modelo."
+                )
+            except ValueError as error:
+                APP_STATE["csv_predictions"] = None
+                csv_message = str(error)
+        else:
+            csv_message = "Primero carga un CSV para poder generar predicciones."
+
+    if request.method == "POST" and request.form.get("action") == "update_embeddings":
+        active_tab = "reduccion"
+        try:
+            tsne_perplexity = float(request.form.get("tsne_perplexity", "30"))
+            umap_neighbors = int(request.form.get("umap_neighbors", "15"))
+            umap_min_dist = float(request.form.get("umap_min_dist", "0.1"))
+            APP_STATE["dimensionality"] = prepare_dimensionality_views(
+                APP_STATE["classification_dataset"],
+                tsne_perplexity=max(5.0, min(tsne_perplexity, 60.0)),
+                umap_neighbors=max(2, min(umap_neighbors, 80)),
+                umap_min_dist=max(0.0, min(umap_min_dist, 0.99)),
+            )
+        except ValueError:
+            message = "No se pudieron actualizar los hiperparámetros de t-SNE y UMAP."
 
     if request.method == "POST" and request.form.get("action") == "predict":
         active_tab = "prediccion"
@@ -712,6 +848,7 @@ def home():
         csv_message=csv_message,
         up_logo_exists=UP_LOGO_PATH.exists(),
         umap_available=APP_STATE["dimensionality"]["umap_available"],
+        dimensionality_params=APP_STATE["dimensionality"]["params"],
         r2_chart=APP_STATE["r2_chart"],
         rmse_chart=APP_STATE["rmse_chart"],
         acc_chart=APP_STATE["acc_chart"],
@@ -725,8 +862,10 @@ def home():
         recommendations=APP_STATE["recommendations"],
         optuna_summary=APP_STATE["optuna_summary"],
         csv_state=APP_STATE["csv_state"],
+        csv_predictions=APP_STATE["csv_predictions"],
         team_members=TEAM_MEMBERS,
         professor_name=PROFESSOR_NAME,
+        model_notes=APP_STATE["model_notes"],
     )
 
 
