@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto de Machine Learning 2 | Maestría UP</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <style>
+        :root {
+            --bg: #fbf6ef;
+            --paper: #fffdf8;
+            --ink: #2e2418;
+            --muted: #75634d;
+            --line: #e7d7b7;
+            --gold: #b69149;
+            --gold-deep: #8e6a22;
+            --red: #8b1e2a;
+            --red-soft: #f7e7e9;
+            --navy: #17324d;
+            --shadow: 0 24px 60px rgba(95, 66, 20, 0.12);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            color: var(--ink);
+            font-family: "Segoe UI", Tahoma, sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(139, 30, 42, 0.10), transparent 28%),
+                radial-gradient(circle at left center, rgba(182, 145, 73, 0.16), transparent 24%),
+                linear-gradient(180deg, #fffaf3 0%, var(--bg) 100%);
+        }
+
+        main {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 28px 18px 60px;
+        }
+
+        .hero, .card {
+            background: var(--paper);
+            border: 1px solid rgba(182, 145, 73, 0.25);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+        }
+
+        .hero {
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(255, 251, 244, 0.98) 0%, rgba(250, 238, 221, 0.98) 100%);
+        }
+
+        .hero-top, .meta, .grid-2, .grid-3, .feature-grid, .team-grid, .check-grid, .recommend-grid, .optuna-grid, .hyper-grid, .intro-grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .hero-top { grid-template-columns: 1.15fr 0.85fr; align-items: start; }
+        .meta { grid-template-columns: repeat(4, 1fr); margin: 22px 0 24px; }
+        .grid-2, .recommend-grid, .optuna-grid { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .feature-grid, .team-grid, .intro-grid, .hyper-grid { grid-template-columns: 1fr 1fr; }
+        .check-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+        .brand { display: flex; gap: 22px; align-items: center; }
+        .brand img {
+            width: 104px; height: 104px; object-fit: contain; border-radius: 20px;
+            background: white; padding: 8px; border: 1px solid rgba(182, 145, 73, 0.18);
+        }
+        .brand-mark {
+            width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center;
+            background: radial-gradient(circle at 30% 30%, #eacb8d, #a67b2d 75%);
+            color: white; font-size: 34px; font-weight: 800;
+        }
+
+        .kicker {
+            margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.28em;
+            color: var(--red); font-size: 13px; font-weight: 800;
+        }
+
+        h1 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(42px, 5vw, 72px);
+            line-height: 0.95;
+            color: var(--gold-deep);
+        }
+
+        h2, h3 { color: var(--navy); margin-top: 0; }
+
+        .subtitle, .subtle {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .subtitle { max-width: 860px; font-size: 21px; margin: 16px 0 0; }
+
+        .hero-side { display: grid; gap: 12px; }
+        .hero-chip {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(182, 145, 73, 0.22);
+            border-left: 5px solid var(--red);
+            border-radius: 18px;
+            padding: 16px 18px;
+        }
+        .hero-chip strong { display: block; color: var(--navy); margin-bottom: 6px; font-size: 19px; }
+        .hero-chip span { color: var(--muted); font-size: 17px; line-height: 1.6; }
+
+        .card { padding: 24px; }
+
+        .intro-card {
+            background: linear-gradient(135deg, rgba(139, 30, 42, 0.96) 0%, rgba(182, 145, 73, 0.9) 100%);
+            color: white;
+            border: 0;
+        }
+        .intro-card h2, .intro-card h3, .intro-card p, .intro-card li { color: white; }
+
+        .intro-title {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .intro-lead {
+            font-size: 24px;
+            line-height: 1.7;
+            color: rgba(255, 248, 237, 0.96);
+            margin-bottom: 18px;
+        }
+
+        .intro-block {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 22px;
+            padding: 20px;
+        }
+
+        .intro-block h3 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .intro-block p, .intro-block li {
+            font-size: 21px;
+            line-height: 1.7;
+            color: rgba(255, 248, 237, 0.96);
+        }
+
+        .intro-block ul {
+            margin: 0;
+            padding-left: 24px;
+        }
+
+        .collapsible {
+            border: 1px solid #ead8b4;
+            border-radius: 22px;
+            background: #fffaf3;
+            overflow: hidden;
+        }
+
+        .collapsible summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 18px 20px;
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .collapsible summary::-webkit-details-marker { display: none; }
+        .collapsible summary::after { content: "+"; font-size: 28px; color: var(--red); line-height: 1; }
+        .collapsible[open] summary::after { content: "-"; }
+        .collapsible-body { padding: 0 20px 20px; }
+
+        .recommend-card, .optuna-card, .hyper-card {
+            background: linear-gradient(135deg, #fffdf8 0%, #fff3e0 100%);
+            border: 1px solid #ead8b4;
+            border-radius: 22px;
+            padding: 18px;
+        }
+
+        .recommend-card strong, .optuna-card strong {
+            display: block;
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .optuna-panel, .info-panel {
+            margin-top: 18px;
+            background: linear-gradient(135deg, #fff5f1 0%, #fff8ea 100%);
+            border: 1px solid #edd2c6;
+            border-radius: 22px;
+            padding: 20px;
+        }
+
+        .mini-label {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .stat-value {
+            margin: 14px 0 0;
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--gold-deep);
+            line-height: 1;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+        }
+
+        .metric-strong {
+            color: var(--red);
+            font-weight: 800;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .tab {
+            display: inline-block;
+            padding: 14px 20px;
+            border-radius: 999px;
+            background: #f5e8d0;
+            color: var(--gold-deep);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 17px;
+            border: 1px solid #e5d1aa;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--red) 0%, var(--gold-deep) 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .section-title h2 {
+            font-size: 40px;
+            margin-bottom: 0;
+        }
+
+        .pill {
+            background: var(--red-soft);
+            color: var(--red);
+            border: 1px solid #ebc8cd;
+            border-radius: 999px;
+            padding: 9px 14px;
+            font-weight: 800;
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .plot-shell {
+            overflow: hidden;
+            border-radius: 22px;
+            background: linear-gradient(180deg, #fffdf8 0%, #fcf3e4 100%);
+            border: 1px solid #ead8b4;
+            padding: 8px;
+            margin-top: 14px;
+        }
+
+        .plot-shell .plotly-graph-div, .plot-shell > div {
+            width: 100% !important;
+        }
+
+        .csv-preview {
+            overflow-x: auto;
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: #fffaf3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 20px;
+        }
+
+        th, td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .winner { font-weight: 800; color: var(--red); }
+
+        .hyper-top { display: flex; gap: 16px; align-items: flex-start; }
+        .icon-box {
+            width: 80px; min-width: 80px; height: 80px; border-radius: 18px;
+            background: linear-gradient(135deg, #f7ead2 0%, #f2dcc0 100%);
+            display: grid; place-items: center; border: 1px solid #e6d2af;
+        }
+        .icon-box svg { width: 54px; height: 54px; }
+
+        .code, .mono { font-family: Consolas, "Courier New", monospace; }
+
+        .code {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--red-soft);
+            color: var(--red);
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .mono {
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #21354e;
+            background: #fffaf0;
+            border: 1px solid #eddcbe;
+            border-radius: 16px;
+            padding: 14px;
+            margin-top: 14px;
+        }
+
+        label { display: block; margin-bottom: 6px; color: var(--muted); font-weight: 700; font-size: 17px; }
+
+        input, select {
+            width: 100%;
+            padding: 12px 13px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: #fffdfa;
+            font-size: 17px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: #fffdfa;
+            font-size: 16px;
+        }
+
+        button {
+            margin-top: 18px;
+            border: 0;
+            background: linear-gradient(135deg, var(--red) 0%, var(--gold-deep) 100%);
+            color: white;
+            font-weight: 800;
+            padding: 14px 18px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 17px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fbefef 0%, #f7e8da 100%);
+            color: var(--red);
+            border: 1px solid #ecc9cb;
+            font-weight: 700;
+            font-size: 17px;
+        }
+
+        @media (max-width: 1100px) {
+            .hero-top, .meta, .grid-2, .grid-3, .feature-grid, .team-grid, .check-grid, .recommend-grid, .optuna-grid, .hyper-grid, .intro-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="hero">
+            <div class="hero-top">
+                <div>
+                    <div class="brand">
+                        {% if up_logo_exists %}
+                        <img src="/up-logo" alt="Logo Universidad Panamericana">
+                        {% else %}
+                        <div class="brand-mark">UP</div>
+                        {% endif %}
+                        <div>
+                            <p class="kicker">Universidad Panamericana</p>
+                            <h1>Proyecto de Machine Learning 2</h1>
+                        </div>
+                    </div>
+                    <p class="subtitle">
+                        Aplicación desarrollada por el equipo para analizar, comparar y visualizar modelos de machine learning
+                        sobre problemas de regresión y clasificación, integrando métricas, optimización de hiperparámetros,
+                        reducción de dimensión e importación flexible de datos desde CSV.
+                    </p>
+                </div>
+
+                <div class="hero-side">
+                    <div class="hero-chip">
+                        <strong>Profesor</strong>
+                        <span>{{ professor_name }}</span>
+                    </div>
+                    <div class="hero-chip">
+                        <strong>Datasets analizados</strong>
+                        <span>Un dataset de regresión y un dataset de clasificación para comparar desempeño en escenarios distintos.</span>
+                    </div>
+                    <div class="hero-chip">
+                        <strong>Enfoque del proyecto</strong>
+                        <span>Comparación de modelos, interpretación de métricas, Optuna, PCA, t-SNE, UMAP e importación de CSV.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card intro-card" style="margin-top: 22px;">
+            <h2 class="intro-title">Presentación del proyecto</h2>
+            <p class="intro-lead">
+                Este proyecto tiene como objetivo evaluar y comparar distintos modelos de aprendizaje supervisado,
+                mostrando de forma clara su comportamiento, sus métricas y sus diferencias, con una interfaz pensada
+                para presentación académica y análisis por parte del equipo.
+            </p>
+
+            <div class="intro-grid">
+                <div class="intro-block">
+                    <h3>Objetivo</h3>
+                    <p>
+                        Identificar qué modelos ofrecen mejor desempeño en tareas de regresión y clasificación,
+                        apoyándose en evidencia cuantitativa, visualizaciones interactivas y ajuste automatizado de hiperparámetros.
+                    </p>
+                </div>
+
+                <div class="intro-block">
+                    <h3>Métodos de entrenamiento</h3>
+                    <ul>
+                        <li>Regresión Lineal</li>
+                        <li>Random Forest</li>
+                        <li>Gradient Boosting</li>
+                        <li>XGBoost</li>
+                    </ul>
+                </div>
+
+                <div class="intro-block">
+                    <h3>Comparación de modelos</h3>
+                    <p>
+                        Los modelos se comparan sobre datasets reales y se ordenan de acuerdo con sus métricas de desempeño,
+                        permitiendo observar sus fortalezas y limitaciones según el tipo de problema.
+                    </p>
+                </div>
+
+                <div class="intro-block">
+                    <h3>Métricas utilizadas</h3>
+                    <ul>
+                        <li>Regresión: R2, MSE, RMSE y MAE.</li>
+                        <li>Clasificación: Accuracy, F1, Precision y Recall.</li>
+                    </ul>
+                </div>
+
+                <div class="intro-block">
+                    <h3>Visualizaciones</h3>
+                    <ul>
+                        <li>Gráficas interactivas con Plotly.</li>
+                        <li>Reducción de dimensión con PCA, t-SNE y UMAP.</li>
+                        <li>Comparación visual de predicciones y métricas.</li>
+                    </ul>
+                </div>
+
+                <div class="intro-block">
+                    <h3>Datos e importación</h3>
+                    <p>
+                        El sistema trabaja con datasets integrados y también permite cargar un archivo CSV, revisar sus columnas,
+                        corregir el formato y reutilizarlo dentro del tablero.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section class="meta">
+            <article class="card">
+                <div class="mini-label">Dataset de regresión</div>
+                <p class="stat-value">{{ regression_dataset.rows|length }}</p>
+                <div class="subtle">{{ regression_dataset.name }}</div>
+            </article>
+            <article class="card">
+                <div class="mini-label">Dataset categórico</div>
+                <p class="stat-value">{{ classification_dataset.rows|length }}</p>
+                <div class="subtle">{{ classification_dataset.name }}</div>
+            </article>
+            <article class="card">
+                <div class="mini-label">Variables regresión</div>
+                <p class="stat-value">{{ regression_dataset.feature_names|length }}</p>
+                <div class="subtle">Predicción numérica</div>
+            </article>
+            <article class="card">
+                <div class="mini-label">Variables clasificación</div>
+                <p class="stat-value">{{ classification_dataset.feature_names|length }}</p>
+                <div class="subtle">Separación de clases</div>
+            </article>
+        </section>
+
+        <div class="tabs">
+            <a class="tab {% if active_tab == 'resumen' %}active{% endif %}" href="#resumen" onclick="showTab('resumen'); return false;">Resumen</a>
+            <a class="tab {% if active_tab == 'modelos' %}active{% endif %}" href="#modelos" onclick="showTab('modelos'); return false;">Modelos</a>
+            <a class="tab {% if active_tab == 'hiperparametros' %}active{% endif %}" href="#hiperparametros" onclick="showTab('hiperparametros'); return false;">Hiperparámetros</a>
+            <a class="tab {% if active_tab == 'prediccion' %}active{% endif %}" href="#prediccion" onclick="showTab('prediccion'); return false;">Predicción</a>
+            <a class="tab {% if active_tab == 'csv' %}active{% endif %}" href="#csv" onclick="showTab('csv'); return false;">CSV</a>
+            <a class="tab {% if active_tab == 'reduccion' %}active{% endif %}" href="#reduccion" onclick="showTab('reduccion'); return false;">Reducción</a>
+            <a class="tab {% if active_tab == 'dataset' %}active{% endif %}" href="#dataset" onclick="showTab('dataset'); return false;">Datasets</a>
+        </div>
+
+        <section id="resumen" class="panel {% if active_tab == 'resumen' %}active{% endif %}">
+            <div class="grid-2">
+                <article class="card">
+                    <div class="section-title">
+                        <h2>Regresión</h2>
+                        <span class="pill">{{ regression_dataset.name }}</span>
+                    </div>
+                    <p class="subtle">{{ regression_dataset.description }}</p>
+                    <div class="plot-shell">{{ r2_chart|safe }}</div>
+                    <div class="plot-shell">{{ rmse_chart|safe }}</div>
+                </article>
+
+                <article class="card">
+                    <details class="collapsible" open>
+                        <summary>Recomendaciones por caso</summary>
+                        <div class="collapsible-body">
+                            <p class="subtle">No existe un mejor modelo universal. Aquí se recomienda el más conveniente según el objetivo principal observado en esta corrida.</p>
+                            <div class="recommend-grid">
+                                <div class="recommend-card">
+                                    <strong>Regresión: {{ recommendations.regression.model }}</strong>
+                                    <p class="subtle">{{ recommendations.regression.why }}</p>
+                                </div>
+                                <div class="recommend-card">
+                                    <strong>Clasificación: {{ recommendations.classification.model }}</strong>
+                                    <p class="subtle">{{ recommendations.classification.why }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <details class="collapsible" style="margin-top: 16px;">
+                        <summary>{{ optuna_summary.title }}</summary>
+                        <div class="collapsible-body">
+                            <p class="subtle">{{ optuna_summary.description }}</p>
+                            {% if optuna_summary.available %}
+                            <div class="optuna-grid">
+                                <div class="optuna-card">
+                                    <strong>Optuna en regresión</strong>
+                                    <p class="subtle">Modelo explorado: {{ optuna_summary.regression.model }}</p>
+                                    <p class="subtle">Mejor <span class="metric-strong">{{ optuna_summary.regression.metric }}</span>: <span class="metric-strong">{{ optuna_summary.regression.value }}</span></p>
+                                    <div class="mono">{{ optuna_summary.regression.params }}</div>
+                                </div>
+                                <div class="optuna-card">
+                                    <strong>Optuna en clasificación</strong>
+                                    <p class="subtle">Modelo explorado: {{ optuna_summary.classification.model }}</p>
+                                    <p class="subtle">Mejor <span class="metric-strong">{{ optuna_summary.classification.metric }}</span>: <span class="metric-strong">{{ optuna_summary.classification.value }}</span></p>
+                                    <div class="mono">{{ optuna_summary.classification.params }}</div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p class="subtle">Instala `optuna` para ver una búsqueda automática de hiperparámetros integrada en este tablero.</p>
+                            {% endif %}
+                        </div>
+                    </details>
+
+                    <details class="collapsible" style="margin-top: 16px;">
+                        <summary>Equipo del proyecto</summary>
+                        <div class="collapsible-body">
+                            <div class="team-grid">
+                                {% for member in team_members %}
+                                <div class="optuna-card">
+                                    <strong>{{ member.name }}</strong>
+                                    <p class="subtle">{{ member.email }}</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <div class="info-panel"><strong>Profesor:</strong> {{ professor_name }}</div>
+                        </div>
+                    </details>
+                </article>
+            </div>
+        </section>
+
+        <section id="modelos" class="panel {% if active_tab == 'modelos' %}active{% endif %}">
+            <div class="grid-2">
+                <article class="card">
+                    <div class="section-title">
+                        <h2>Comparación de regresión</h2>
+                        <span class="pill">R2, MSE, RMSE y MAE</span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Modelo</th><th>R2</th><th>MSE</th><th>RMSE</th><th>MAE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for model in regression_models %}
+                            <tr>
+                                <td class="{% if loop.first %}winner{% endif %}">{{ model.label }}</td>
+                                <td class="metric-strong">{{ "%.4f"|format(model.metrics.r2) }}</td>
+                                <td>{{ "%.2f"|format(model.metrics.mse) }}</td>
+                                <td class="metric-strong">{{ "%.2f"|format(model.metrics.rmse) }}</td>
+                                <td>{{ "%.2f"|format(model.metrics.mae) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </article>
+
+                <article class="card">
+                    <div class="section-title">
+                        <h2>Comparación de clasificación</h2>
+                        <span class="pill">Accuracy, F1, precision y recall</span>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Modelo</th><th>Accuracy</th><th>F1</th><th>Precision</th><th>Recall</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for model in classification_models %}
+                            <tr>
+                                <td class="{% if loop.first %}winner{% endif %}">{{ model.label }}</td>
+                                <td class="metric-strong">{{ "%.4f"|format(model.metrics.accuracy) }}</td>
+                                <td class="metric-strong">{{ "%.4f"|format(model.metrics.f1) }}</td>
+                                <td>{{ "%.4f"|format(model.metrics.precision) }}</td>
+                                <td>{{ "%.4f"|format(model.metrics.recall) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="plot-shell">{{ acc_chart|safe }}</div>
+                    <div class="plot-shell">{{ f1_chart|safe }}</div>
+                </article>
+            </div>
+        </section>
+
+        <section id="hiperparametros" class="panel {% if active_tab == 'hiperparametros' %}active{% endif %}">
+            <article class="card">
+                <div class="section-title">
+                    <h2>Hiperparámetros explicados</h2>
+                    <span class="pill">Lectura visual</span>
+                </div>
+                <div class="hyper-grid">
+                    {% for item in hyperparameter_cards %}
+                    <div class="hyper-card">
+                        <div class="hyper-top">
+                            <div class="icon-box">
+                                {% if item.icon == 'branches' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 54V36M32 36C32 30 27 27 22 24M32 36C32 30 37 27 42 24M22 24V14M42 24V14M22 14H16M22 14H28M42 14H36M42 14H48" stroke="#8b1e2a" stroke-width="4" stroke-linecap="round"/></svg>
+                                {% elif item.icon == 'forest' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 50V36M18 36L10 44M18 36L26 44M32 50V28M32 28L22 38M32 28L42 38M46 50V34M46 34L38 42M46 34L54 42" stroke="#8e6a22" stroke-width="4" stroke-linecap="round"/></svg>
+                                {% elif item.icon == 'speed' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 44C18 30.7 28.7 20 42 20M42 20L34 12M42 20L34 28M18 44H46" stroke="#17324d" stroke-width="4" stroke-linecap="round"/></svg>
+                                {% elif item.icon == 'layers' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 20L32 12L52 20L32 28L12 20ZM12 32L32 40L52 32M12 44L32 52L52 44" stroke="#0f766e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                {% elif item.icon == 'columns' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="14" width="10" height="36" rx="3" stroke="#8b1e2a" stroke-width="4"/><rect x="27" y="14" width="10" height="36" rx="3" stroke="#b69149" stroke-width="4"/><rect x="42" y="14" width="10" height="36" rx="3" stroke="#17324d" stroke-width="4"/></svg>
+                                {% elif item.icon == 'split' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="14" r="5" fill="#8b1e2a"/><circle cx="18" cy="42" r="5" fill="#b69149"/><circle cx="46" cy="42" r="5" fill="#17324d"/><path d="M32 19V28M32 28L18 37M32 28L46 37" stroke="#8e6a22" stroke-width="4" stroke-linecap="round"/></svg>
+                                {% elif item.icon == 'leaf' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 42C18 28 28 18 46 18C46 36 36 46 22 46C20 46 18 44 18 42Z" stroke="#0f766e" stroke-width="4"/><path d="M22 42C28 36 34 30 42 24" stroke="#0f766e" stroke-width="4" stroke-linecap="round"/></svg>
+                                {% elif item.icon == 'shield' %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 10L48 16V28C48 38 41 47 32 52C23 47 16 38 16 28V16L32 10Z" stroke="#8b1e2a" stroke-width="4"/><path d="M24 31L29 36L40 25" stroke="#8b1e2a" stroke-width="4" stroke-linecap="round"/></svg>
+                                {% else %}
+                                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="14" stroke="#17324d" stroke-width="4"/><path d="M32 10V16M32 48V54M10 32H16M48 32H54" stroke="#17324d" stroke-width="4" stroke-linecap="round"/></svg>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h3>{{ item.title }}</h3>
+                                <p class="subtle">{{ item.description }}</p>
+                                <span class="code">{{ item.key }} = {{ item.example_value }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
+        </section>
+
+        <section id="prediccion" class="panel {% if active_tab == 'prediccion' %}active{% endif %}">
+            <article class="card">
+                <div class="section-title">
+                    <h2>Predicción manual sobre regresión</h2>
+                    <span class="pill">{{ regression_dataset.name }}</span>
+                </div>
+                {% if message %}<div class="message">{{ message }}</div>{% endif %}
+                <form method="post">
+                    <input type="hidden" name="action" value="predict">
+                    <input type="hidden" name="tab" value="prediccion">
+                    <div class="feature-grid">
+                        {% for feature in regression_dataset.feature_names %}
+                        <div>
+                            <label for="{{ feature }}">{{ feature }}</label>
+                            <input id="{{ feature }}" name="{{ feature }}" type="number" step="any" value="{{ manual_values[feature] }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="submit">Calcular predicciones</button>
+                </form>
+                {% if prediction_chart %}
+                <div class="plot-shell">{{ prediction_chart|safe }}</div>
+                {% endif %}
+            </article>
+        </section>
+
+        <section id="csv" class="panel {% if active_tab == 'csv' %}active{% endif %}">
+            <div class="grid-2">
+                <article class="card">
+                    <div class="section-title">
+                        <h2>Cargar CSV</h2>
+                        <span class="pill">Importacion flexible</span>
+                    </div>
+                    {% if csv_message %}<div class="message">{{ csv_message }}</div>{% endif %}
+                    <p class="subtle">
+                        Puedes subir un CSV propio, revisar sus columnas, seleccionar la variable objetivo y reutilizarlo como dataset de regresión o clasificación.
+                    </p>
+                    <form method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="upload_csv">
+                        <input type="hidden" name="tab" value="csv">
+                        <label for="csv_file">Archivo CSV</label>
+                        <input id="csv_file" name="csv_file" type="file" accept=".csv" required>
+                        <button type="submit">Cargar archivo</button>
+                    </form>
+                </article>
+
+                <article class="card">
+                    <h2>Flujo de importación</h2>
+                    <p class="subtle">1. Cargar el archivo CSV desde el equipo.</p>
+                    <p class="subtle">2. Detectar columnas numéricas.</p>
+                    <p class="subtle">3. Elegir si el problema es regresión o clasificación.</p>
+                    <p class="subtle">4. Seleccionar target y features.</p>
+                    <p class="subtle">5. Aplicar el dataset al tablero y reentrenar.</p>
+                </article>
+            </div>
+
+            {% if csv_state %}
+            <article class="card" style="margin-top: 18px;">
+                <div class="section-title">
+                    <h2>Normalización de columnas</h2>
+                    <span class="pill">{{ csv_state.filename }}</span>
+                </div>
+                <form method="post">
+                    <input type="hidden" name="action" value="apply_csv_mapping">
+                    <input type="hidden" name="tab" value="csv">
+                    <div class="grid-2">
+                        <div>
+                            <label for="dataset_kind">Tipo de dataset</label>
+                            <select id="dataset_kind" name="dataset_kind">
+                                <option value="regression">Regresión</option>
+                                <option value="classification">Clasificación</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="target_column">Columna target</label>
+                            <select id="target_column" name="target_column">
+                                {% for header in csv_state.numeric_headers %}
+                                <option value="{{ header }}">{{ header }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <label style="margin-top: 16px;">Columnas para features</label>
+                    <div class="check-grid">
+                        {% for header in csv_state.numeric_headers %}
+                        <label class="check-item">
+                            <input type="checkbox" name="feature_columns" value="{{ header }}" checked>
+                            <span>{{ header }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    <button type="submit">Aplicar al tablero</button>
+                </form>
+            </article>
+
+            <article class="card" style="margin-top: 18px;">
+                <h2>Vista previa del CSV</h2>
+                <div class="csv-preview">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for header in csv_state.headers %}
+                                <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in csv_state.preview %}
+                            <tr>
+                                {% for header in csv_state.headers %}
+                                <td>{{ row[header] }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+            {% endif %}
+        </section>
+
+        <section id="reduccion" class="panel {% if active_tab == 'reduccion' %}active{% endif %}">
+            <article class="card">
+                <div class="section-title">
+                    <h2>Reducción de dimensión del dataset categórico</h2>
+                    <span class="pill">{{ classification_dataset.name }}</span>
+                </div>
+                <p class="subtle">
+                    PCA conserva varianza lineal, t-SNE resalta vecindades locales y UMAP busca una estructura visual más natural si la librería está instalada.
+                </p>
+                <div class="grid-3">
+                    <div class="plot-shell">{{ pca_chart|safe }}</div>
+                    <div class="plot-shell">{{ tsne_chart|safe }}</div>
+                    <div class="plot-shell">
+                        {% if umap_available %}
+                        {{ umap_chart|safe }}
+                        {% else %}
+                        <div class="card" style="box-shadow:none; border-style:dashed;">
+                            <h3>UMAP no disponible</h3>
+                            <p class="subtle">Instala `umap-learn` para habilitar esta vista.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section id="dataset" class="panel {% if active_tab == 'dataset' %}active{% endif %}">
+            <div class="grid-2">
+                <article class="card">
+                    <h2>{{ regression_dataset.name }}</h2>
+                    <p class="subtle">{{ regression_dataset.description }}</p>
+                    <p class="subtle"><strong>Variables:</strong> {{ regression_dataset.feature_names|join(", ") }}</p>
+                </article>
+                <article class="card">
+                    <h2>{{ classification_dataset.name }}</h2>
+                    <p class="subtle">{{ classification_dataset.description }}</p>
+                    <p class="subtle"><strong>Clases:</strong> {{ classification_dataset.target_names|join(", ") }}</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function showTab(tabId) {
+            const panels = document.querySelectorAll(".panel");
+            const tabs = document.querySelectorAll(".tab");
+            panels.forEach((panel) => panel.classList.remove("active"));
+            tabs.forEach((tab) => tab.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            document.querySelector(`a[href="#${tabId}"]`).classList.add("active");
+            window.dispatchEvent(new Event("resize"));
+        }
+    </script>
+</body>
+</html>
