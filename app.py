@@ -1,6 +1,7 @@
-import math
 import csv
 import io
+import math
+import os
 from pathlib import Path
 
 from flask import Flask, render_template, request, send_file
@@ -50,7 +51,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 REGRESSION_BUILDERS = {
-    "linear_regression": ("Regresion Lineal", lambda: LinearRegression()),
+    "linear_regression": ("Regresión Lineal", lambda: LinearRegression()),
     "random_forest": (
         "Random Forest",
         lambda: RandomForestRegressor(
@@ -133,18 +134,18 @@ if XGBClassifier is not None:
 
 HYPERPARAMETER_HELP = {
     "n_estimators": {
-        "title": "Numero de arboles",
-        "description": "Cuantos arboles construye el ensamble. Mas arboles suelen dar mayor estabilidad, pero suben costo y tiempo.",
+        "title": "Número de árboles",
+        "description": "Cuántos árboles construye el ensamble. Más árboles suelen dar mayor estabilidad, pero suben costo y tiempo.",
         "icon": "forest",
     },
     "max_depth": {
-        "title": "Profundidad maxima",
-        "description": "Hasta donde se puede ramificar cada arbol. Mucha profundidad detecta patrones complejos, pero puede sobreajustar.",
+        "title": "Profundidad máxima",
+        "description": "Hasta dónde se puede ramificar cada árbol. Mucha profundidad detecta patrones complejos, pero puede sobreajustar.",
         "icon": "branches",
     },
     "learning_rate": {
         "title": "Velocidad de aprendizaje",
-        "description": "Tamano del ajuste en cada iteracion de boosting. Mas chico suele ser mas estable, pero tarda mas en aprender.",
+        "description": "Tamaño del ajuste en cada iteración de boosting. Más chico suele ser más estable, pero tarda más en aprender.",
         "icon": "speed",
     },
     "subsample": {
@@ -154,45 +155,45 @@ HYPERPARAMETER_HELP = {
     },
     "colsample_bytree": {
         "title": "Muestreo de columnas",
-        "description": "Porcentaje de variables candidatas en cada arbol. Ayuda a que el ensamble sea menos correlacionado.",
+        "description": "Porcentaje de variables candidatas en cada árbol. Ayuda a que el ensamble sea menos correlacionado.",
         "icon": "columns",
     },
     "min_samples_split": {
-        "title": "Minimo para dividir",
-        "description": "Minimo de observaciones para abrir una nueva rama. Evita divisiones muy fragiles.",
+        "title": "Mínimo para dividir",
+        "description": "Mínimo de observaciones para abrir una nueva rama. Evita divisiones muy frágiles.",
         "icon": "split",
     },
     "min_samples_leaf": {
-        "title": "Minimo por hoja",
-        "description": "Minimo de observaciones al final de una hoja. Suaviza decisiones demasiado finas.",
+        "title": "Mínimo por hoja",
+        "description": "Mínimo de observaciones al final de una hoja. Suaviza decisiones demasiado finas.",
         "icon": "leaf",
     },
     "reg_alpha": {
-        "title": "Regularizacion L1",
-        "description": "Empuja a cero pesos poco utiles. Sirve para simplificar y evitar ruido.",
+        "title": "Regularización L1",
+        "description": "Empuja a cero pesos poco útiles. Sirve para simplificar y evitar ruido.",
         "icon": "shield",
     },
     "reg_lambda": {
-        "title": "Regularizacion L2",
+        "title": "Regularización L2",
         "description": "Reduce pesos exagerados y mejora estabilidad frente a outliers o ruido.",
         "icon": "shield",
     },
     "solver": {
         "title": "Optimizador",
-        "description": "Metodo numerico usado para encontrar coeficientes en la regresion logistica.",
+        "description": "Método numérico usado para encontrar coeficientes en la regresión logística.",
         "icon": "gear",
     },
 }
 
 APP_STATE = {}
 TEAM_MEMBERS = [
-    {"name": "Jhosse Paul Marquez Ruiz", "email": "0287289@up.edu.mx"},
-    {"name": "Cesar Augusto Perez Rosas", "email": "0287285@up.edu.mx"},
+    {"name": "Jhosse Paul Márquez Ruiz", "email": "0287289@up.edu.mx"},
+    {"name": "Cesar Augusto Pérez Rosas", "email": "0287285@up.edu.mx"},
     {"name": "Gerardo David Rivero Rique", "email": "0287274@up.edu.mx"},
-    {"name": "Luis Antonio Mani Yanez", "email": "0287239@up.edu.mx"},
-    {"name": "Oscar Barranco Velasquez", "email": "0287244@up.edu.mx"},
+    {"name": "Luis Antonio Mani Yáñez", "email": "0287239@up.edu.mx"},
+    {"name": "Oscar Barranco Velázquez", "email": "0287244@up.edu.mx"},
 ]
-PROFESSOR_NAME = "Dr. Leon Palafox"
+PROFESSOR_NAME = "Dr. León Palafox"
 
 
 def load_regression_dataset():
@@ -205,7 +206,7 @@ def load_regression_dataset():
         rows.append(row)
     return {
         "name": "Diabetes Dataset",
-        "description": "Dataset de regresion con 442 registros y 10 variables para estimar progresion de diabetes.",
+        "description": "Dataset de regresión con 442 registros y 10 variables para estimar progresión de diabetes.",
         "feature_names": feature_names,
         "rows": rows,
     }
@@ -221,7 +222,7 @@ def load_classification_dataset():
         rows.append(row)
     return {
         "name": "Breast Cancer Wisconsin",
-        "description": "Dataset categorico binario con 569 registros y 30 variables para clasificar tumores como benignos o malignos.",
+        "description": "Dataset categórico binario con 569 registros y 30 variables para clasificar tumores como benignos o malignos.",
         "feature_names": feature_names,
         "target_names": list(dataset.target_names),
         "rows": rows,
@@ -331,11 +332,11 @@ def make_plotly_prediction(prediction_rows):
             textposition="top center",
             marker=dict(size=14, color=["#8b1e2a", "#b69149", "#0f766e", "#17324d"][: len(prediction_rows)]),
             line=dict(color="#8b1e2a", width=4),
-            hovertemplate="<b>%{x}</b><br>Prediccion: %{y:.4f}<extra></extra>",
+            hovertemplate="<b>%{x}</b><br>Predicción: %{y:.4f}<extra></extra>",
         )
     )
     fig.update_layout(
-        title="Comparacion visual de predicciones",
+        title="Comparación visual de predicciones",
         paper_bgcolor="#fffaf2",
         plot_bgcolor="#fffaf2",
         font=dict(color="#2e2418", size=15),
@@ -390,12 +391,12 @@ def prepare_dimensionality_views(dataset):
     umap_available = False
     if umap is not None:
         umap_points = umap.UMAP(n_components=2, random_state=42).fit_transform(capped_x)
-        umap_plot = make_plotly_scatter(umap_points, capped_y, "UMAP del dataset categorico")
+        umap_plot = make_plotly_scatter(umap_points, capped_y, "UMAP del dataset categórico")
         umap_available = True
 
     return {
-        "pca_chart": make_plotly_scatter(pca_points, capped_y, "PCA del dataset categorico"),
-        "tsne_chart": make_plotly_scatter(tsne_points, capped_y, "t-SNE del dataset categorico"),
+        "pca_chart": make_plotly_scatter(pca_points, capped_y, "PCA del dataset categórico"),
+        "tsne_chart": make_plotly_scatter(tsne_points, capped_y, "t-SNE del dataset categórico"),
         "umap_chart": umap_plot,
         "umap_available": umap_available,
     }
@@ -427,10 +428,10 @@ def build_conclusions(regression_models, classification_models):
     cls_best_acc = max(classification_models, key=lambda item: item["metrics"]["accuracy"])
     cls_best_f1 = max(classification_models, key=lambda item: item["metrics"]["f1"])
     return [
-        f"En regresion, el mejor R2 lo obtuvo {reg_best_r2['label']} con {reg_best_r2['metrics']['r2']:.4f}.",
+        f"En regresión, el mejor R2 lo obtuvo {reg_best_r2['label']} con {reg_best_r2['metrics']['r2']:.4f}.",
         f"Si priorizas menor error de escala, el menor RMSE fue de {reg_best_rmse['label']} con {reg_best_rmse['metrics']['rmse']:.2f}.",
-        f"En clasificacion, el mejor accuracy fue de {cls_best_acc['label']} con {cls_best_acc['metrics']['accuracy']:.4f}.",
-        f"Si buscas balance entre precision y recall, el mejor F1 lo obtuvo {cls_best_f1['label']} con {cls_best_f1['metrics']['f1']:.4f}.",
+        f"En clasificación, el mejor accuracy fue de {cls_best_acc['label']} con {cls_best_acc['metrics']['accuracy']:.4f}.",
+        f"Si buscas balance entre precisión y recall, el mejor F1 lo obtuvo {cls_best_f1['label']} con {cls_best_f1['metrics']['f1']:.4f}.",
     ]
 
 
@@ -440,11 +441,11 @@ def build_recommendations(regression_models, classification_models):
     return {
         "regression": {
             "model": reg_best["label"],
-            "why": "Conviene cuando quieres la mejor explicacion general del target numerico segun R2 en esta corrida.",
+            "why": "Conviene cuando quieres la mejor explicación general del target numérico según R2 en esta corrida.",
         },
         "classification": {
             "model": cls_best["label"],
-            "why": "Conviene cuando buscas mejor desempeno global para separar clases en este dataset.",
+            "why": "Conviene cuando buscas mejor desempeño global para separar clases en este dataset.",
         },
     }
 
@@ -454,7 +455,7 @@ def run_optuna_summary(regression_dataset, classification_dataset):
         return {
             "available": False,
             "title": "Optuna no disponible",
-            "description": "Optuna es una libreria para buscar hiperparametros de forma automatica y eficiente. Si la instalas, el tablero puede mostrar una busqueda guiada de mejores configuraciones.",
+            "description": "Optuna es una librería para buscar hiperparámetros de forma automática y eficiente. Si la instalas, el tablero puede mostrar una búsqueda guiada de mejores configuraciones.",
         }
 
     reg_x_train, reg_x_test, reg_y_train, reg_y_test = split_dataset(regression_dataset)
@@ -493,7 +494,7 @@ def run_optuna_summary(regression_dataset, classification_dataset):
     return {
         "available": True,
         "title": "Optuna",
-        "description": "Optuna es una libreria de optimizacion de hiperparametros. En lugar de probar configuraciones manualmente, explora combinaciones de forma automatica para encontrar mejores resultados con menos intentos.",
+        "description": "Optuna es una librería de optimización de hiperparámetros. En lugar de probar configuraciones manualmente, explora combinaciones de forma automática para encontrar mejores resultados con menos intentos.",
         "regression": {
             "metric": "R2",
             "value": round(reg_study.best_value, 4),
@@ -557,9 +558,7 @@ def build_dataset_from_csv(csv_state, dataset_kind, target_column, selected_feat
         raise ValueError("No se pudieron convertir filas válidas del CSV.")
 
     dataset_name = f"CSV Importado ({csv_state['filename']})"
-    description = (
-        "Dataset cargado manualmente desde CSV y normalizado desde la interfaz."
-    )
+    description = "Dataset cargado manualmente desde CSV y normalizado desde la interfaz."
     base = {
         "name": dataset_name,
         "description": description,
@@ -602,10 +601,10 @@ def initialize_app_state():
             "conclusions": conclusions,
             "recommendations": recommendations,
             "optuna_summary": optuna_summary,
-            "r2_chart": make_plotly_bar(regression_models, "r2", "Regresion: comparacion de R2", "#8b1e2a"),
-            "rmse_chart": make_plotly_bar(regression_models, "rmse", "Regresion: comparacion de RMSE", "#b69149"),
-            "acc_chart": make_plotly_bar(classification_models, "accuracy", "Clasificacion: comparacion de accuracy", "#17324d"),
-            "f1_chart": make_plotly_bar(classification_models, "f1", "Clasificacion: comparacion de F1", "#0f766e"),
+            "r2_chart": make_plotly_bar(regression_models, "r2", "Regresión: comparación de R2", "#8b1e2a"),
+            "rmse_chart": make_plotly_bar(regression_models, "rmse", "Regresión: comparación de RMSE", "#b69149"),
+            "acc_chart": make_plotly_bar(classification_models, "accuracy", "Clasificación: comparación de accuracy", "#17324d"),
+            "f1_chart": make_plotly_bar(classification_models, "f1", "Clasificación: comparación de F1", "#0f766e"),
             "csv_state": None,
         }
     )
@@ -661,14 +660,14 @@ def home():
                     if dataset_kind == "regression":
                         APP_STATE["regression_dataset"] = custom_dataset
                         APP_STATE["regression_models"] = train_regression_models(custom_dataset)
-                        APP_STATE["r2_chart"] = make_plotly_bar(APP_STATE["regression_models"], "r2", "Regresion: comparacion de R2", "#8b1e2a")
-                        APP_STATE["rmse_chart"] = make_plotly_bar(APP_STATE["regression_models"], "rmse", "Regresion: comparacion de RMSE", "#b69149")
+                        APP_STATE["r2_chart"] = make_plotly_bar(APP_STATE["regression_models"], "r2", "Regresión: comparación de R2", "#8b1e2a")
+                        APP_STATE["rmse_chart"] = make_plotly_bar(APP_STATE["regression_models"], "rmse", "Regresión: comparación de RMSE", "#b69149")
                     else:
                         APP_STATE["classification_dataset"] = custom_dataset
                         APP_STATE["classification_models"] = train_classification_models(custom_dataset)
                         APP_STATE["dimensionality"] = prepare_dimensionality_views(custom_dataset)
-                        APP_STATE["acc_chart"] = make_plotly_bar(APP_STATE["classification_models"], "accuracy", "Clasificacion: comparacion de accuracy", "#17324d")
-                        APP_STATE["f1_chart"] = make_plotly_bar(APP_STATE["classification_models"], "f1", "Clasificacion: comparacion de F1", "#0f766e")
+                        APP_STATE["acc_chart"] = make_plotly_bar(APP_STATE["classification_models"], "accuracy", "Clasificación: comparación de accuracy", "#17324d")
+                        APP_STATE["f1_chart"] = make_plotly_bar(APP_STATE["classification_models"], "f1", "Clasificación: comparación de F1", "#0f766e")
 
                     APP_STATE["hyperparameter_cards"] = build_hyperparameter_cards(
                         APP_STATE["regression_models"] + APP_STATE["classification_models"]
@@ -683,7 +682,7 @@ def home():
                         APP_STATE["regression_dataset"], APP_STATE["classification_dataset"]
                     )
                     manual_values = {feature: 0 for feature in APP_STATE["regression_dataset"]["feature_names"]}
-                csv_message = "CSV aplicado correctamente al tablero."
+                    csv_message = "CSV aplicado correctamente al tablero."
                 except ValueError as error:
                     csv_message = str(error)
             else:
@@ -735,4 +734,4 @@ initialize_app_state()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=False)
