@@ -4,3 +4,8 @@ xgboost>=2.1.0
 umap-learn>=0.5.6
 plotly>=5.24.0
 optuna>=4.0.0
+pandas>=2.2.0
+ydata-profiling>=4.9.0
+shap
+# AutoClean puede instalarse opcionalmente si quieres probar limpieza automática.
+# AutoClean>=1.1.3
