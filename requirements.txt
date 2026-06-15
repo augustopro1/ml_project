@@ -7,3 +7,4 @@ optuna>=4.0.0
 pandas>=2.2.0
 ydata-profiling
 shap
+lime

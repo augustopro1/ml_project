@@ -38,7 +38,7 @@
             box-shadow: var(--shadow);
         }
         .hero { padding: 28px; }
-        .hero-top, .grid-2, .grid-3, .tabs, .team-grid, .model-note-grid, .feature-grid, .csv-grid, .hp-layout {
+        .hero-top, .grid-2, .grid-3, .team-grid, .model-note-grid, .feature-grid, .csv-grid, .hp-layout {
             display: grid; gap: 18px;
         }
         .hero-top { grid-template-columns: 1.2fr .8fr; align-items: start; }
@@ -47,8 +47,10 @@
         .csv-grid { grid-template-columns: 1fr 1fr; }
         .brand { display: flex; gap: 20px; align-items: center; }
         .brand img {
-            width: 120px; height: 120px; object-fit: contain; border-radius: 24px;
-            background: white; padding: 10px; box-shadow: 0 12px 28px rgba(46,36,24,.10);
+            width: 280px; 
+            height: 280px; 
+            object-fit: contain;
+            /* Se eliminó el background, padding y box-shadow para respetar la transparencia */
         }
         .kicker {
             margin: 0 0 8px; color: var(--red); font-size: 13px; font-weight: 800;
@@ -68,12 +70,21 @@
         .hero-chip strong { display: block; font-size: 18px; color: var(--navy); margin-bottom: 6px; }
         .hero-chip span { font-size: 16px; color: var(--muted); }
         .card { padding: 22px; }
-        .tabs { grid-template-columns: repeat(8, minmax(0, 1fr)); margin: 20px 0; }
+        
+        .tabs { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 12px; 
+            margin: 20px 0; 
+        }
         .tab {
-            text-align: center; padding: 14px 10px; border-radius: 999px; text-decoration: none;
+            text-align: center; padding: 14px 20px; border-radius: 999px; text-decoration: none;
             background: #f5e8d0; color: var(--gold-deep); border: 1px solid #e5d1aa; font-weight: 800;
+            white-space: nowrap; 
         }
         .tab.active { background: linear-gradient(135deg, var(--red), var(--gold-deep)); color: white; border-color: transparent; }
+        
         .panel { display: none; }
         .panel.active { display: block; }
         .pill {
@@ -153,7 +164,7 @@
             color: var(--muted);
         }
         @media (max-width: 1100px) {
-            .hero-top, .grid-2, .grid-3, .tabs, .team-grid, .model-note-grid, .feature-grid, .csv-grid, .hp-layout { grid-template-columns: 1fr; }
+            .hero-top, .grid-2, .grid-3, .team-grid, .model-note-grid, .feature-grid, .csv-grid, .hp-layout { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -167,12 +178,11 @@
                         <img src="/up-logo" alt="Logo Universidad Panamericana">
                         {% endif %}
                         <div>
-                            <p class="kicker">Universidad Panamericana</p>
                             <h1>Proyecto de Machine Learning 2</h1>
                         </div>
                     </div>
                     <p class="subtitle">
-                        Aplicación del equipo para analizar modelos de regresión y clasificación, comparar métricas,
+                        Aplicación del equipo para analizar modelos de regresión, comparar métricas,
                         ajustar hiperparámetros, generar predicciones por CSV, explorar datasets y documentar resultados con enfoque académico.
                     </p>
                 </div>
@@ -199,15 +209,15 @@
             <a class="tab {% if active_tab == 'equipo' %}active{% endif %}" href="#equipo" onclick="showTab('equipo'); return false;">Equipo</a>
         </div>
 
-<section id="resumen" class="panel {% if active_tab == 'resumen' %}active{% endif %}">
-<article class="card" style="background: linear-gradient(135deg, var(--red) 0%, var(--gold-deep) 100%); color: white; margin-bottom: 18px; border: none; box-shadow: 0 12px 24px rgba(139, 30, 42, 0.2);">
+        <section id="resumen" class="panel {% if active_tab == 'resumen' %}active{% endif %}">
+            <article class="card" style="background: linear-gradient(135deg, var(--red) 0%, var(--gold-deep) 100%); color: white; margin-bottom: 18px; border: none; box-shadow: 0 12px 24px rgba(139, 30, 42, 0.2);">
                 <h2 style="color: white; font-family: Georgia, serif; font-size: 32px;">Presentación del proyecto</h2>
                 <p style="color: rgba(255,255,255,0.9); font-size: 16px; line-height: 1.6; margin-bottom: 24px;">Este proyecto tiene como objetivo evaluar y comparar distintos modelos de aprendizaje supervisado, mostrando de forma clara su comportamiento, sus métricas y sus diferencias, con una interfaz pensada para presentación académica y análisis por parte del equipo.</p>
                 
                 <div class="grid-2" style="gap: 16px;">
                     <div style="background: rgba(255,255,255,0.12); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.25);">
                         <h3 style="color: white; margin-bottom: 8px;">Objetivo</h3>
-                        <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin: 0; line-height: 1.5;">Identificar qué modelos ofrecen mejor desempeño en tareas de regresión y clasificación, apoyándose en evidencia cuantitativa, visualizaciones interactivas y ajuste automatizado de hiperparámetros.</p>
+                        <p style="color: rgba(255,255,255,0.9); font-size: 14px; margin: 0; line-height: 1.5;">Identificar qué modelos ofrecen mejor desempeño en tareas de regresión, apoyándose en evidencia cuantitativa, visualizaciones interactivas y ajuste automatizado de hiperparámetros.</p>
                     </div>
                     <div style="background: rgba(255,255,255,0.12); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.25);">
                         <h3 style="color: white; margin-bottom: 8px;">Métodos de entrenamiento</h3>
@@ -226,7 +236,6 @@
                         <h3 style="color: white; margin-bottom: 8px;">Métricas utilizadas</h3>
                         <ul style="color: rgba(255,255,255,0.9); font-size: 14px; margin: 0; padding-left: 20px; line-height: 1.5;">
                             <li>Regresión: R2, MSE, RMSE y MAE.</li>
-                            <li>Clasificación: Accuracy, F1, Precision y Recall.</li>
                         </ul>
                     </div>
                     <div style="background: rgba(255,255,255,0.12); padding: 18px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.25);">
@@ -244,7 +253,7 @@
                 </div>
             </article>
 
-            <div class="grid-2">
+            <div>
                 <article class="card">
                     <h2>Desempeño Comparado: Modelos de Regresión</h2>
                     <p class="subtle">Ordenados por R2 en el set de Validación (Test). Observa el sobreajuste (Overfitting) en los ensambles.</p>
@@ -268,29 +277,6 @@
                         </tbody>
                     </table>
                 </article>
-                <article class="card">
-                    <h2>Desempeño Comparado: Modelos de Clasificación</h2>
-                    <p class="subtle">Ordenados por la métrica de Accuracy global obtenida sobre el conjunto de testeo.</p>
-                    <table style="margin-top: 12px;">
-                        <thead>
-                            <tr><th>Algoritmo</th><th>Accuracy Train</th><th>Accuracy Test</th></tr>
-                        </thead>
-                        <tbody>
-                            {% for m in classification_models %}
-                                    <tr style="border-bottom: 1px solid var(--line);">
-                                        <td style="padding: 12px 15px;">
-                                            <strong style="color: var(--navy); display: block; margin-bottom: 3px;">{{ m.label }}</strong>
-                                            <span style="display: block; font-family: monospace; font-size: 11px; color: #666; max-width: 280px; word-wrap: break-word; line-height: 1.3;">
-                                                 {{ m.hyperparams_str }}
-                                            </span>
-                                        </td>
-                                        <td style="padding: 12px 15px;">{{ m.metrics.accuracy_train|round(4) }}</td>
-                                        <td style="padding: 12px 15px; font-weight: bold;">{{ m.metrics.accuracy|round(4) }}</td>
-                                    </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </article>
             </div>
         </section>
 
@@ -298,73 +284,33 @@
             <article class="card">
                 <h2>Explicación de modelos</h2>
                 <div class="model-note-grid">
+                    {% for note in model_notes %}
                     <div class="note-card">
-                        <h3>Regresión Lineal</h3>
-                        <p><strong>Descripción:</strong> Modelo base que estima relaciones lineales entre variables.</p>
-                        <p><strong>Beneficios:</strong> Rápido, estable y muy interpretable.</p>
-                        <p><strong>Fortalezas:</strong> Buen benchmark, bajo costo y coeficientes claros.</p>
-                        <p><strong>Debilidades:</strong> Puede perder fuerza cuando la relación real no es lineal.</p>
-                        <p><strong>Sesgo y varianza:</strong> Suele tener sesgo moderado y varianza baja.</p>
-                        <p><strong>Interpretabilidad:</strong> Muy alta.</p>
+                        <h3>{{ note.name }}</h3>
+                        <p><strong>Descripción:</strong> {{ note.description }}</p>
+                        <p><strong>Beneficios:</strong> {{ note.benefits }}</p>
+                        <p><strong>Fortalezas:</strong> {{ note.strengths }}</p>
+                        <p><strong>Debilidades:</strong> {{ note.weaknesses }}</p>
+                        <p><strong>Sesgo y varianza:</strong> {{ note.bias_variance }}</p>
+                        <p><strong>Interpretabilidad:</strong> {{ note.interpretability }}</p>
                     </div>
-                    <div class="note-card">
-                        <h3>Random Forest</h3>
-                        <p><strong>Descripción:</strong> Ensamble de múltiples árboles entrenados con subconjuntos de datos y variables.</p>
-                        <p><strong>Beneficios:</strong> Robusto, flexible y competitivo en datos tabulares.</p>
-                        <p><strong>Fortalezas:</strong> Captura relaciones no lineales y controla mejor el sobreajuste que un árbol individual.</p>
-                        <p><strong>Debilidades:</strong> Menos interpretable y más pesado que un modelo lineal.</p>
-                        <p><strong>Sesgo y varianza:</strong> Bias medio y varianza controlada por el ensamble.</p>
-                        <p><strong>Interpretabilidad:</strong> Media.</p>
-                    </div>
-                    <div class="note-card">
-                        <h3>Gradient Boosting</h3>
-                        <p><strong>Descripción:</strong> Construye árboles secuenciales donde cada nuevo árbol corrige errores previos.</p>
-                        <p><strong>Beneficios:</strong> Muy competitivo en precisión y útil para patrones complejos.</p>
-                        <p><strong>Fortalezas:</strong> Buen equilibrio entre flexibilidad y capacidad predictiva.</p>
-                        <p><strong>Debilidades:</strong> Más sensible a hiperparámetros y más lento de entrenar.</p>
-                        <p><strong>Sesgo y varianza:</strong> Reduce bias, pero si se exagera puede aumentar varianza.</p>
-                        <p><strong>Interpretabilidad:</strong> Media-baja.</p>
-                    </div>
-                    <div class="note-card">
-                        <h3>XGBoost</h3>
-                        <p><strong>Descripción:</strong> Versión optimizada de boosting con regularización y gran eficiencia.</p>
-                        <p><strong>Beneficios:</strong> Alto desempeño y posibilidad de ajustes finos.</p>
-                        <p><strong>Fortalezas:</strong> Muy potente, escalable y fuerte en datasets tabulares.</p>
-                        <p><strong>Debilidades:</strong> Mayor complejidad técnica y menor facilidad de explicación.</p>
-                        <p><strong>Sesgo y varianza:</strong> Puede reducir bias con fuerza, pero requiere control para no sobreajustar.</p>
-                        <p><strong>Interpretabilidad:</strong> Media-baja.</p>
-                    </div>
-                    <div class="note-card">
-                        <h3>Regresión Logística</h3>
-                        <p><strong>Descripción:</strong> Modelo lineal de clasificación que estima probabilidades por clase.</p>
-                        <p><strong>Beneficios:</strong> Excelente benchmark por su rapidez, estabilidad e interpretabilidad.</p>
-                        <p><strong>Fortalezas:</strong> Buen punto de referencia y coeficientes fáciles de explicar.</p>
-                        <p><strong>Debilidades:</strong> Se queda corta si la frontera entre clases es muy no lineal.</p>
-                        <p><strong>Sesgo y varianza:</strong> Sesgo moderado y varianza baja.</p>
-                        <p><strong>Interpretabilidad:</strong> Alta.</p>
-                    </div>
+                    {% endfor %}
                 </div>
             </article>
 
             <article class="card" style="margin-top:18px;">
                 <h2>Reentrenamiento en línea con listas de hiperparámetros</h2>
-                <p class="subtle">Escribe una grilla usando una línea por hiperparámetro, por ejemplo: <code>n_estimators: 100, 150, 200</code>.</p>
+                <p class="subtle">Escribe una grilla usando una línea por hiperparámetro, por ejemplo: <code>n_estimators: 100, 150, 200</code>. El sistema comparará la ejecución del modelo base, búsqueda bruta (Grid Search) y búsqueda inteligente (Optuna).</p>
                 <form method="post">
                     <input type="hidden" name="action" value="tune_model">
                     <input type="hidden" name="tab" value="modelos">
                     <div class="grid-2">
                         <div>
-                            <label for="problem_type">Tipo de problema</label>
-                            <select id="problem_type" name="problem_type">
-                                <option value="regression">Regresión</option>
-                                <option value="classification">Clasificación</option>
-                            </select>
-                        </div>
-                        <div>
                             <label for="model_key">Modelo</label>
                             <select id="model_key" name="model_key"></select>
-                            <div class="model-choice-note">El selector cambia según el tipo de problema y muestra solo modelos compatibles.</div>
+                            <div class="model-choice-note">El selector muestra solo modelos de regresión compatibles.</div>
                         </div>
+                        <div></div>
                     </div>
                     <div class="grid-2" style="margin-top:12px;">
                         <div>
@@ -380,7 +326,15 @@ max_depth: 3, 5, 8</div>
                             <p class="subtle"><a id="official_model_doc" href="https://scikit-learn.org/stable/" target="_blank" rel="noopener noreferrer">Ver documentación oficial del modelo y sus hiperparámetros</a></p>
                         </div>
                     </div>
-                    <button type="submit">Reentrenar y comparar</button>
+                    
+                    <div class="note-card" style="margin-top: 18px; border-left: 4px solid var(--red);">
+                        <h3>¿Qué es Optuna y la Optimización Bayesiana?</h3>
+                        <p style="font-size: 14px; margin-bottom: 8px;"><strong>Optuna</strong> es un framework de optimización de hiperparámetros. A diferencia del <em>Grid Search</em> tradicional (que evalúa ciegamente todas las combinaciones), utiliza <strong>Optimización Bayesiana</strong>.</p>
+                        <p style="font-size: 14px; margin-bottom: 8px;"><strong>Ventajas:</strong> Aprende de iteraciones pasadas para enfocar la búsqueda exclusivamente en las áreas más prometedoras de la grilla matemática, logrando una convergencia acelerada y reduciendo enormemente el tiempo de cómputo.</p>
+                        <p style="font-size: 14px; margin-bottom: 0;"><strong>Desventajas:</strong> El proceso es inherentemente secuencial (difícil de paralelizar en sus algoritmos base) y agrega mayor peso al entorno productivo.</p>
+                    </div>
+                    
+                    <button type="submit">Reentrenar y comparar (GridSearch vs Optuna)</button>
                 </form>
 
                 {% if tuning_result %}
@@ -413,27 +367,31 @@ max_depth: 3, 5, 8</div>
                         <h3 style="color: var(--navy); border-bottom: 2px solid var(--line); padding-bottom: 8px; margin-bottom: 15px;">
                             Tabla Comparativa de Rendimiento
                         </h3>
-                        <p class="subtle" style="margin-bottom: 15px;">Métricas de evaluación ordenadas de mejor a peor desempeño frente al nuevo modelo ajustado:</p>
+                        <p class="subtle" style="margin-bottom: 15px;">Métricas de evaluación comparando las distintas estrategias sobre la misma matriz de datos:</p>
                         
                         <div style="overflow-x: auto;">
                             <table style="width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--line);">
                                 <thead>
                                     <tr style="background: var(--navy); color: white; text-align: left;">
-                                        <th style="padding: 12px 15px; font-size: 13px;">Modelo / Variante</th>
-                                        <th style="padding: 12px 15px; font-size: 13px; text-align: right;">Métrica ({{ tuning_result.score_key }})</th>
+                                        <th style="padding: 12px 15px; font-size: 13px;">Estrategia / Optimizador</th>
+                                        <th style="padding: 12px 15px; font-size: 13px; text-align: center;">Tiempo</th>
+                                        <th style="padding: 12px 15px; font-size: 13px; text-align: right;">{{ tuning_result.score_key }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for item in tuning_result.comparison %}
-                                    <tr style="border-bottom: 1px solid var(--line); {% if 'ajustado' in item.label %}background: #fdf5e6; font-weight: bold;{% endif %}">
+                                    <tr style="border-bottom: 1px solid var(--line); {% if 'Optuna' in item.estrategia %}background: #fdf5e6; font-weight: bold;{% endif %}">
                                         <td style="padding: 12px 15px; font-size: 13.5px; color: var(--navy);">
-                                            {% if "ajustado" in item.label %}
-                                                ⭐ {{ item.label }}
+                                            {% if "Optuna" in item.estrategia %}
+                                                ⭐ {{ item.estrategia }}
                                             {% else %}
-                                                {{ item.label }}
+                                                {{ item.estrategia }}
                                             {% endif %}
                                         </td>
-                                        <td style="padding: 12px 15px; font-size: 14px; text-align: right; font-family: monospace; {% if 'ajustado' in item.label %}color: var(--red);{% else %}color: #333;{% endif %}">
+                                        <td style="padding: 12px 15px; font-size: 14px; text-align: center; font-family: monospace; color: #555;">
+                                            {{ item.tiempo }}
+                                        </td>
+                                        <td style="padding: 12px 15px; font-size: 14px; text-align: right; font-family: monospace; {% if 'Optuna' in item.estrategia %}color: var(--red);{% else %}color: #333;{% endif %}">
                                             {{ item.score|round(4) }}
                                         </td>
                                     </tr>
@@ -491,10 +449,9 @@ max_depth: 3, 5, 8</div>
                 <div style="margin-top:24px;">
                     <select id="model-selector" onchange="showHpPanel(this.value)" style="padding: 12px; width: 100%; margin-bottom: 24px; border-radius: 14px; border: 1px solid var(--line); background: #fffdfa; font-size: 16px; font-weight: bold; color: var(--navy); cursor: pointer;">
                         <option value="hp-linear">Regresión Lineal</option>
-                        <option value="hp-rf">Random Forest (Regresión y Clasificación)</option>
+                        <option value="hp-rf">Random Forest (Regresión)</option>
                         <option value="hp-gb">Gradient Boosting</option>
                         <option value="hp-xgb">XGBoost</option>
-                        <option value="hp-logit">Regresión Logística (Clasificación)</option>
                     </select>
                     
                     <div id="hp-panels-container">
@@ -618,7 +575,7 @@ max_depth: 3, 5, 8</div>
                                     </div>
                                 </div>
                             </div>
-                            <p class="subtle" style="margin-top:18px;"><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html" target="_blank" rel="noopener noreferrer">Documentación RandomForestRegressor</a> | <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html" target="_blank" rel="noopener noreferrer">RandomForestClassifier</a></p>
+                            <p class="subtle" style="margin-top:18px;"><a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html" target="_blank" rel="noopener noreferrer">Documentación RandomForestRegressor</a></p>
                         </div>
 
                         <div id="hp-gb" class="hp-panel">
@@ -752,72 +709,6 @@ max_depth: 3, 5, 8</div>
                             </div>
                             <p class="subtle" style="margin-top:18px;"><a href="https://xgboost.readthedocs.io/en/stable/python/python_api.html" target="_blank" rel="noopener noreferrer">Documentación oficial de XGBoost scikit-learn API</a></p>
                         </div>
-
-                        <div id="hp-logit" class="hp-panel">
-                            <div class="param-grid-layout">
-                                <div class="param-card">
-                                    <div class="icon-box" style="margin:0; min-width: 50px; width: 50px; height: 50px;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/></svg>
-                                    </div>
-                                    <div>
-                                        <h4>Inversa de Regularización (C)</h4>
-                                        <p>Controla la fuerza de la regularización. Valores más pequeños especifican mayor penalización a coeficientes grandes.</p>
-                                        <div class="param-code">C = 1.0</div>
-                                    </div>
-                                </div>
-                                <div class="param-card">
-                                    <div class="icon-box" style="margin:0; min-width: 50px; width: 50px; height: 50px;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="#8b1e2a" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-                                    </div>
-                                    <div>
-                                        <h4>Tipo de penalización (penalty)</h4>
-                                        <p>Determina la norma utilizada para la penalización (L1 para descartar variables, L2 para limitar pesos, o ElasticNet).</p>
-                                        <div class="param-code">penalty = 'l2'</div>
-                                    </div>
-                                </div>
-                                <div class="param-card">
-                                    <div class="icon-box" style="margin:0; min-width: 50px; width: 50px; height: 50px;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="#17324d" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                                    </div>
-                                    <div>
-                                        <h4>Algoritmo base (solver)</h4>
-                                        <p>Algoritmo numérico a utilizar para la optimización matemática de la función de costo (lbfgs, liblinear, saga, etc.).</p>
-                                        <div class="param-code">solver = 'lbfgs'</div>
-                                    </div>
-                                </div>
-                                <div class="param-card">
-                                    <div class="icon-box" style="margin:0; min-width: 50px; width: 50px; height: 50px;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="#b69149" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                                    </div>
-                                    <div>
-                                        <h4>Iteraciones máximas (max_iter)</h4>
-                                        <p>Número máximo de iteraciones para que el solver numérico alcance la convergencia (necesario subirlo en datasets complejos).</p>
-                                        <div class="param-code">max_iter = 100</div>
-                                    </div>
-                                </div>
-                                <div class="param-card">
-                                    <div class="icon-box" style="margin:0; min-width: 50px; width: 50px; height: 50px;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="#8e6a22" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                                    </div>
-                                    <div>
-                                        <h4>Pesos de clase (class_weight)</h4>
-                                        <p>Asigna mayor importancia o penalización a ciertas clases. Fundamental cuando se tienen variables de clasificación desbalanceadas.</p>
-                                        <div class="param-code">class_weight = None</div>
-                                    </div>
-                                </div>
-                                <div class="param-card">
-                                    <div class="icon-box" style="margin:0; min-width: 50px; width: 50px; height: 50px;">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="#75634d" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>
-                                    </div>
-                                    <div>
-                                        <h4>Proporción L1/L2 (l1_ratio)</h4>
-                                        <p>Parámetro exclusivo de la penalización ElasticNet, determina matemáticamente la proporción de mezcla entre regularización L1 y L2.</p>
-                                        <div class="param-code">l1_ratio = None</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="subtle" style="margin-top:18px;"><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html" target="_blank" rel="noopener noreferrer">Documentación oficial de LogisticRegression</a></p>
-                        </div>
                         
                     </div>
                 </div>
@@ -852,7 +743,8 @@ max_depth: 3, 5, 8</div>
                 {% endif %}
             </article>
         </section>
-<section id="csv" class="panel {% if active_tab == 'csv' %}active{% endif %}">
+        
+        <section id="csv" class="panel {% if active_tab == 'csv' %}active{% endif %}">
             <div class="grid-2">
                 <article class="card">
                     <h2>Cargar CSV para predicción</h2>
@@ -871,7 +763,6 @@ max_depth: 3, 5, 8</div>
                 <article class="card">
                     <h2>Columnas requeridas</h2>
                     <p class="subtle"><strong>Regresión:</strong> {{ regression_dataset.feature_names|join(", ") }}</p>
-                    <p class="subtle"><strong>Clasificación:</strong> {{ classification_dataset.feature_names[:10]|join(", ") }}...</p>
                     <p class="subtle">El archivo debe contener las variables de entrada que utilizan los modelos del tablero para poder estimar nuevas observaciones.</p>
                 </article>
             </div>
@@ -910,15 +801,6 @@ max_depth: 3, 5, 8</div>
                 <form method="post">
                     <input type="hidden" name="action" value="predict_csv">
                     <input type="hidden" name="tab" value="csv">
-                    <div class="csv-grid" style="margin-top: 14px;">
-                        <div>
-                            <label for="prediction_kind" style="font-size: 14px; font-weight: bold; color: var(--navy);">Usar modelos de</label>
-                            <select id="prediction_kind" name="prediction_kind" style="margin-top: 8px;">
-                                <option value="regression">Regresión</option>
-                                <option value="classification">Clasificación</option>
-                            </select>
-                        </div>
-                    </div>
                     <button type="submit" style="margin-top: 18px;">Generar predicciones del CSV</button>
                 </form>
 
@@ -998,93 +880,81 @@ max_depth: 3, 5, 8</div>
 
         <section id="xai" class="panel {% if active_tab == 'xai' %}active{% endif %}">
             <article class="card">
-                <h2>Explicabilidad Avanzada (XAI) con PDP, ICE y SHAP</h2>
+                <h2>Explicabilidad Avanzada (XAI) con PDP, ICE, SHAP y LIME</h2>
                 <p class="subtle">Analiza el comportamiento marginal e impactos globales o locales de forma independiente para cada tarea de modelado.</p>
                 
-                <div class="grid-2" style="margin-top: 20px;">
-                    <div class="note-card" style="background: #fffcf8; border: 1px solid var(--line); border-radius: 20px; padding: 20px;">
-                        <h3 style="color: var(--red); border-bottom: 2px solid var(--line); padding-bottom: 8px;">Controles de Regresión (Diabetes)</h3>
+                <div class="note-card" style="margin-top: 15px; margin-bottom: 25px; border-left: 4px solid var(--red);">
+                    <h3 style="margin-bottom: 10px; color: var(--navy);">Guía Rápida de Interpretación Visual</h3>
+                    <p style="font-size: 14px; margin-bottom: 6px;"><strong>Gráficos ICE (Individual Conditional Expectation):</strong> Cada línea translúcida es una fila del dataset. Muestra cómo cambiaría exactamente la predicción de <em>esa sola persona u observación</em> si modificamos la variable seleccionada, manteniendo el resto igual.</p>
+                    <p style="font-size: 14px; margin-bottom: 6px;"><strong>Gráfico PDP (Partial Dependence Plot):</strong> Es la línea gruesa que promedia todos los ICE plots. Revela la tendencia <em>global y marginal</em> que la variable tiene sobre las predicciones del modelo.</p>
+                    <p style="font-size: 14px; margin-bottom: 6px;"><strong>SHAP Summary (Barras):</strong> Promedia el valor absoluto de los impactos de SHAP. Las variables hasta arriba son las más determinantes para el modelo en términos matemáticos.</p>
+                    <p style="font-size: 14px; margin-bottom: 6px;"><strong>SHAP Beeswarm:</strong> Cada punto es una predicción real. El color indica si el valor de la variable era bajo o alto, y su posición en el eje X indica si empujó la predicción de forma positiva o negativa.</p>
+                    <p style="font-size: 14px; margin-bottom: 0;"><strong>SHAP Dependence:</strong> Analiza una sola variable. Cruza su valor original (eje X) contra su impacto final en el modelo (eje Y), destapando patrones o "escalones" no lineales.</p>
+                </div>
+
+                <div class="note-card" style="background: #fffcf8; border: 1px solid var(--line); border-radius: 20px; padding: 20px;">
+                    <h3 style="color: var(--red); border-bottom: 2px solid var(--line); padding-bottom: 8px;">Controles de Regresión (Diabetes)</h3>
+                    
+                    <form method="post">
+                        <input type="hidden" name="action" value="update_xai">
+                        <input type="hidden" name="tab" value="xai">
                         
-                        <form method="post">
-                            <input type="hidden" name="action" value="update_xai">
-                            <input type="hidden" name="tab" value="xai">
+                        <div class="grid-3" style="margin-top:10px;">
+                            <div>
+                                <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block;">Modelo:</label>
+                                <select name="reg_model_key" style="width:100%;">
+                                    {% for m in regression_models %}
+                                    <option value="{{ m.key }}" {% if xai_views.selected_reg_model == m.key %}selected{% endif %}>{{ m.label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                             
-                            <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block; margin-top:10px;">Modelo:</label>
-                            <select name="reg_model_key" style="width:100%; margin-bottom:10px;">
-                                {% for m in regression_models %}
-                                <option value="{{ m.key }}" {% if xai_views.selected_reg_model == m.key %}selected{% endif %}>{{ m.label }}</option>
-                                {% endfor %}
-                            </select>
-                            
-                            <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block;">Variable Predictora (PDP/ICE):</label>
-                            <select name="reg_feature" style="width:100%; margin-bottom:10px;">
-                                {% for f in regression_dataset.feature_names %}
-                                <option value="{{ f }}" {% if xai_views.selected_reg_feat == f %}selected{% endif %}>{{ f }}</option>
-                                {% endfor %}
-                            </select>
+                            <div>
+                                <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block;">Variable Predictora (PDP/ICE):</label>
+                                <select name="reg_feature" style="width:100%;">
+                                    {% for f in regression_dataset.feature_names %}
+                                    <option value="{{ f }}" {% if xai_views.selected_reg_feat == f %}selected{% endif %}>{{ f }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                            <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block;">Visualización SHAP:</label>
-                            <select name="reg_shap_type" style="width:100%; margin-bottom:15px;">
-                                <option value="summary_bar" {% if xai_views.selected_reg_shap_type == 'summary_bar' %}selected{% endif %}>Todas las variables (Importancia - Barras)</option>
-                                <option value="summary_beeswarm" {% if xai_views.selected_reg_shap_type == 'summary_beeswarm' %}selected{% endif %}>Todas las variables (Distribución - Beeswarm)</option>
-                                <option value="dependence" {% if xai_views.selected_reg_shap_type == 'dependence' %}selected{% endif %}>Una sola variable (Dependencia - Dispersión)</option>
-                            </select>
-                            
-                            <button type="submit" style="width:100%; background: var(--red); color: white;">Actualizar Regresión</button>
-                        </form>
+                            <div>
+                                <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block;">Visualización SHAP:</label>
+                                <select name="reg_shap_type" style="width:100%;">
+                                    <option value="summary_bar" {% if xai_views.selected_reg_shap_type == 'summary_bar' %}selected{% endif %}>Todas (Importancia - Barras)</option>
+                                    <option value="summary_beeswarm" {% if xai_views.selected_reg_shap_type == 'summary_beeswarm' %}selected{% endif %}>Todas (Distribución - Beeswarm)</option>
+                                    <option value="dependence" {% if xai_views.selected_reg_shap_type == 'dependence' %}selected{% endif %}>Una sola (Dependencia - Dispersión)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" style="background: var(--red); color: white;">Actualizar Explicaciones</button>
+                    </form>
 
-                        <div style="margin-top: 25px;">
+                    <div class="grid-2" style="margin-top: 25px;">
+                        <div>
                             <h4>Resultados PDP / ICE</h4>
                             {% if xai_views.regression.available %}
                             <p class="subtle">{{ xai_views.regression.message }}</p>
                             <div class="plot-shell">{{ xai_views.regression.chart|safe }}</div>
-                            <div class="plot-shell" style="margin-top: 20px;">{{ xai_views.reg_shap|safe }}</div>
                             {% else %}
                             <p class="subtle">{{ xai_views.regression.message }}</p>
                             {% endif %}
                         </div>
+                        <div>
+                            <h4>Resultados SHAP</h4>
+                            {% if xai_views.regression.available %}
+                            <p class="subtle">Impactos marginales calculados con TreeExplainer o KernelExplainer.</p>
+                            <div class="plot-shell">{{ xai_views.reg_shap|safe }}</div>
+                            {% endif %}
+                        </div>
                     </div>
 
-                    <div class="note-card" style="background: #fffcf8; border: 1px solid var(--line); border-radius: 20px; padding: 20px;">
-                        <h3 style="color: var(--navy); border-bottom: 2px solid var(--line); padding-bottom: 8px;">Controles de Clasificación (Cáncer)</h3>
+                    <div style="margin-top: 30px; border-top: 2px dashed var(--line); padding-top: 15px;">
+                        <h4 style="color: var(--navy); margin-bottom: 5px;">Análisis Local con LIME</h4>
+                        <p style="font-size: 13px; line-height: 1.5; margin-bottom: 15px;">A diferencia de SHAP (que es global/exacto), <strong>LIME</strong> explica predicciones estrictamente individuales simulando un modelo lineal temporal alrededor del dato elegido. A continuación, la explicación generada para la <strong>primera observación del dataset</strong>.</p>
                         
-                        <form method="post">
-                            <input type="hidden" name="action" value="update_xai">
-                            <input type="hidden" name="tab" value="xai">
-                            
-                            <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block; margin-top:10px;">Modelo:</label>
-                            <select name="clf_model_key" style="width:100%; margin-bottom:10px;">
-                                {% for m in classification_models %}
-                                <option value="{{ m.key }}" {% if xai_views.selected_clf_model == m.key %}selected{% endif %}>{{ m.label }}</option>
-                                {% endfor %}
-                            </select>
-                            
-                            <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block;">Variable Predictora (PDP/ICE):</label>
-                            <select name="clf_feature" style="width:100%; margin-bottom:10px;">
-                                {% for f in classification_dataset.feature_names %}
-                                <option value="{{ f }}" {% if xai_views.selected_clf_feat == f %}selected{% endif %}>{{ f }}</option>
-                                {% endfor %}
-                            </select>
-
-                            <label style="font-size:13px; font-weight:bold; color:var(--navy); display:block;">Visualización SHAP:</label>
-                            <select name="clf_shap_type" style="width:100%; margin-bottom:15px;">
-                                <option value="summary_bar" {% if xai_views.selected_clf_shap_type == 'summary_bar' %}selected{% endif %}>Todas las variables (Importancia - Barras)</option>
-                                <option value="summary_beeswarm" {% if xai_views.selected_clf_shap_type == 'summary_beeswarm' %}selected{% endif %}>Todas las variables (Distribución - Beeswarm)</option>
-                                <option value="dependence" {% if xai_views.selected_clf_shap_type == 'dependence' %}selected{% endif %}>Una sola variable (Dependencia - Dispersión)</option>
-                            </select>
-                            
-                            <button type="submit" style="width:100%; background: var(--navy); color: white;">Actualizar Clasificación</button>
-                        </form>
-
-                        <div style="margin-top: 25px;">
-                            <h4>Resultados PDP / ICE</h4>
-                            {% if xai_views.classification.available %}
-                            <p class="subtle">{{ xai_views.classification.message }}</p>
-                            <div class="plot-shell">{{ xai_views.classification.chart|safe }}</div>
-                            <div class="plot-shell" style="margin-top: 20px;">{{ xai_views.clf_shap|safe }}</div>
-                            {% else %}
-                            <p class="subtle">{{ xai_views.classification.message }}</p>
-                            {% endif %}
+                        <div class="plot-shell">
+                            {{ xai_views.reg_lime|safe }}
                         </div>
                     </div>
                 </div>
@@ -1098,14 +968,6 @@ max_depth: 3, 5, 8</div>
                     <div class="plot-shell">{{ dataset_regression_plots.hist|safe }}</div>
                     <div class="plot-shell">{{ dataset_regression_plots.box|safe }}</div>
                     <div class="plot-shell">{{ dataset_regression_plots.corr|safe }}</div>
-                </div>
-            </article>
-            <article class="card" style="margin-top:18px;">
-                <h2>Análisis visual del dataset de clasificación</h2>
-                <div class="grid-3">
-                    <div class="plot-shell">{{ dataset_classification_plots.hist|safe }}</div>
-                    <div class="plot-shell">{{ dataset_classification_plots.box|safe }}</div>
-                    <div class="plot-shell">{{ dataset_classification_plots.corr|safe }}</div>
                 </div>
             </article>
         </section>
@@ -1170,22 +1032,14 @@ max_depth: 3, 5, 8</div>
         });
 
         const modelKey = document.getElementById("model_key");
-        const problemType = document.getElementById("problem_type");
         const paramGrid = document.getElementById("param_grid");
-        const modelOptions = {
-            regression: [
-                ["linear_regression", "Regresión Lineal"],
-                ["random_forest", "Random Forest Regressor"],
-                ["gradient_boosting", "Gradient Boosting Regressor"],
-                ["xgboost", "XGBoost Regressor"],
-            ],
-            classification: [
-                ["logistic_regression", "Logistic Regression"],
-                ["random_forest_classifier", "Random Forest Classifier"],
-                ["gradient_boosting_classifier", "Gradient Boosting Classifier"],
-                ["xgboost_classifier", "XGBoost Classifier"],
-            ],
-        };
+        
+        const modelOptions = [
+            ["linear_regression", "Regresión Lineal"],
+            ["random_forest", "Random Forest Regressor"],
+            ["gradient_boosting", "Gradient Boosting Regressor"],
+            ["xgboost", "XGBoost Regressor"]
+        ];
 
         const paramExamples = {
             linear_regression: {
@@ -1203,28 +1057,13 @@ max_depth: 3, 5, 8</div>
             xgboost: {
                 text: "n_estimators: 100, 300, 500\nmax_depth: 3, 5, 7\nlearning_rate: 0.01, 0.05, 0.1\nsubsample: 0.7, 0.9, 1.0\ncolsample_bytree: 0.7, 0.9, 1.0",
                 link: "https://xgboost.readthedocs.io/en/stable/python/python_api.html?highlight=XGBRegressor",
-            },
-            logistic_regression: {
-                text: "C: 0.1, 1.0, 10.0\nmax_iter: 500, 1000, 2000\ntol: 0.0001, 0.001",
-                link: "https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html",
-            },
-            random_forest_classifier: {
-                text: "n_estimators: 100, 300, 500\nmax_depth: 5, 8, 12\nmin_samples_split: 2, 4, 6\nmin_samples_leaf: 1, 2, 4",
-                link: "https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html",
-            },
-            gradient_boosting_classifier: {
-                text: "n_estimators: 100, 200, 300\nlearning_rate: 0.01, 0.05, 0.1\nmax_depth: 2, 3, 4\nsubsample: 0.7, 0.9, 1.0",
-                link: "https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html",
-            },
-            xgboost_classifier: {
-                text: "n_estimators: 100, 300, 500\nmax_depth: 3, 5, 7\nlearning_rate: 0.01, 0.05, 0.1\nsubsample: 0.7, 0.9, 1.0\ncolsample_bytree: 0.7, 0.9, 1.0",
-                link: "https://xgboost.readthedocs.io/en/stable/python/python_api.html?highlight=XGBRegressor",
-            },
-        }
+            }
+        };
+
         function refreshModelOptions() {
-            const selectedType = problemType.value;
+            if (!modelKey) return;
             modelKey.innerHTML = "";
-            modelOptions[selectedType].forEach(([value, label]) => {
+            modelOptions.forEach(([value, label]) => {
                 const option = document.createElement("option");
                 option.value = value;
                 option.textContent = label;
@@ -1234,27 +1073,21 @@ max_depth: 3, 5, 8</div>
         }
 
         function refreshModelExamples() {
+            if (!modelKey) return;
             const selectedModel = modelKey.value;
             const example = paramExamples[selectedModel];
             const box = document.getElementById("param_examples_box");
             const doc = document.getElementById("official_model_doc");
             
             if (example && box && doc && paramGrid) {
-                // Actualiza la caja de texto explicativa de la derecha
                 box.textContent = example.text;
-                
-                // Hace que el TEXTO EDITABLE cambie automáticamente al cambiar de modelo
                 paramGrid.value = example.text; 
-                
-                // Cambia el placeholder por si el usuario borra todo el contenido
                 paramGrid.placeholder = example.text;
-                
-                // Actualiza el link de scikit-learn correspondiente
                 doc.href = example.link;
             }
         }
-        if (problemType && modelKey && paramGrid) {
-            problemType.addEventListener("change", refreshModelOptions);
+        
+        if (modelKey && paramGrid) {
             modelKey.addEventListener("change", refreshModelExamples);
             refreshModelOptions();
         }
